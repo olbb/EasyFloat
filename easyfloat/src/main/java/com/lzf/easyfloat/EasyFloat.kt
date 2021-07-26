@@ -2,19 +2,17 @@ package com.lzf.easyfloat
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.view.View
 import com.lzf.easyfloat.core.FloatingWindowManager
 import com.lzf.easyfloat.data.FloatConfig
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
 import com.lzf.easyfloat.interfaces.*
-import com.lzf.easyfloat.interfaces.OnPermissionResult
 import com.lzf.easyfloat.permission.PermissionUtils
-import com.lzf.easyfloat.utils.LifecycleUtils
-import com.lzf.easyfloat.interfaces.FloatCallbacks
 import com.lzf.easyfloat.utils.DisplayUtils
+import com.lzf.easyfloat.utils.LifecycleUtils
 import com.lzf.easyfloat.utils.Logger
-import java.lang.Exception
 
 /**
  * @author: liuzhenfeng
@@ -32,8 +30,11 @@ class EasyFloat {
          * @return 浮窗属性构建者
          */
         @JvmStatic
-        fun with(activity: Context): Builder = if (activity is Activity) Builder(activity)
-        else Builder(LifecycleUtils.getTopActivity() ?: activity)
+        fun with(activity: Context): Builder = when {
+            Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT -> Builder(activity.applicationContext)
+            activity is Activity -> Builder(activity)
+            else -> Builder(LifecycleUtils.getTopActivity() ?: activity)
+        }
 
         /**
          * 关闭当前浮窗
