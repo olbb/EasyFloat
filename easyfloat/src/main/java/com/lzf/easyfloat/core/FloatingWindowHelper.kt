@@ -8,7 +8,9 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.view.*
 import android.view.WindowManager.LayoutParams.*
 import android.widget.EditText
@@ -36,10 +38,13 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     private var enterAnimator: Animator? = null
     private var lastLayoutMeasureWidth = -1
     private var lastLayoutMeasureHeight = -1
+    private val handler = Handler(Looper.getMainLooper())
 
     fun createWindow(): Boolean = if (getToken() == null) {
-        val activity = if (context is Activity) context else LifecycleUtils.getTopActivity()
-        activity?.findViewById<View>(android.R.id.content)?.post { createWindowInner() } ?: false
+//        val activity = if (context is Activity) context else LifecycleUtils.getTopActivity()
+//        activity?.findViewById<View>(android.R.id.content)?.post { createWindowInner() } ?: false
+        handler.post{createWindowInner()}
+        true
     } else {
         createWindowInner()
     }
